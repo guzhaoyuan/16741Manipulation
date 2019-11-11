@@ -14,5 +14,14 @@
 % Wi = W(1:6, i);		% normalized screw coordinates of i-th contact normal
 
 function [W] = contactScrew(CP, CN)
-
 % write your code here
+    N = size(CP,2);
+    W = zeros(6,N);
+    for i = 1:N
+        W(1:3,i) = CN(:,i);
+        W(4:6,i) = cross(CP(:,i), CN(:,i));
+        W(1:6,i) = W(1:6,i)/norm(W(1:6,i));
+%         norm(W(1:6,i))
+        assert(abs(norm(W(1:6,i)) - 1) < 1e-10);
+    end
+end

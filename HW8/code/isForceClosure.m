@@ -6,5 +6,24 @@
 % zmax: the maximum value of the objective function at the optimal point; scalar
 
 function [bFC, zmax] = isForceClosure(W)
-
 % write your code here
+    %% Get interior point P.
+    MN = size(W,2);
+    P = mean(W,2);
+    assert(norm(P) ~= 0);
+    %% Construct Convex Polytope Inequality by using dual. (Constraint)
+    A = zeros(MN,6);
+    b = ones(MN,1);
+    for i = 1:MN
+       A(i,:) = (W(:,i) - P)';
+    end
+    %% Construct Linear Programming problem.
+    t = -P;
+    [~, zmax, exitflag] = linprog(-t,A,b);
+    if exitflag == 1
+        zmax = -zmax;
+        bFC = zmax < 1;
+        return;
+    end
+    bFC = false;
+end
